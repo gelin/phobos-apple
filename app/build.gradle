@@ -8,10 +8,10 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "ru.gelin.android.phobosapple"
-        minSdkVersion 28
+        minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
     }
     buildTypes {
         release {
