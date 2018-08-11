@@ -3,6 +3,7 @@ package ru.gelin.android.phobosapple
 import android.app.Activity
 import android.os.Bundle
 import android.os.Handler
+import android.view.KeyEvent
 import android.view.View
 import android.widget.VideoView
 import org.jetbrains.anko.*
@@ -29,6 +30,16 @@ class MainActivity : Activity() {
         super.onResume()
 
         playNextMovieAfterSecond()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_CENTER -> {
+                playNextMovie()
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
     }
 
     private fun playNextMovieAfterSecond() {
