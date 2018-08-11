@@ -24,6 +24,8 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         find<View>(R.id.content).setOnClickListener { playNextMovie() }
+
+        find<VideoView>(R.id.video).setOnCompletionListener { playNextMovie() }
     }
 
     override fun onResume() {
