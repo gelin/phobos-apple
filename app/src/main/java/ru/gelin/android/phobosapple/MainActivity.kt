@@ -60,11 +60,11 @@ class MainActivity : Activity() {
         }
 
         log.info { "Playing $movie" }
-        longToast(movie.location)
 
         val videoView = find<VideoView>(R.id.video)
         videoView.setVideoPath(movie.url)
         videoView.start()
+        videoView.setOnPreparedListener { longToast(movie.location) }
     }
 
 }
