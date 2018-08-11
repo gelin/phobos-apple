@@ -2,12 +2,10 @@ package ru.gelin.android.phobosapple
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.VideoView
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.find
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -30,17 +28,26 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        playNextMovie()
+        playNextMovieAfterSecond()
+    }
+
+    private fun playNextMovieAfterSecond() {
+        Handler().postDelayed(
+            { playNextMovie() },
+            1000
+        )
     }
 
     private fun playNextMovie() {
         val movie = movies.nextMovie()
         if (movie == null) {
             toast("No movies loaded")
+            playNextMovieAfterSecond()
             return
         }
 
         log.info { "Playing $movie" }
+        longToast(movie.location)
 
         val videoView = find<VideoView>(R.id.video)
         videoView.setVideoPath(movie.url)
