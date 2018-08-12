@@ -7,7 +7,7 @@
              android:background="#0099cc"
              tools:context=".MainActivity">
 
-    <VideoView
+    <SurfaceView
             android:id="@+id/video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
