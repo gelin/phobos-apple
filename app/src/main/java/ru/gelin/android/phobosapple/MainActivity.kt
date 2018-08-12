@@ -50,6 +50,21 @@ class MainActivity : Activity() {
             }
         }
 
+        player.addListener(object: Player.DefaultEventListener() {
+            private fun showLocation() {
+                val location = (player.currentTag as? Video)?.location ?: return
+                longToast(location)
+            }
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
+                Player.STATE_READY -> showLocation()
+                else -> Unit
+            }
+            override fun onPositionDiscontinuity(reason: Int) = when (reason) {
+                Player.DISCONTINUITY_REASON_PERIOD_TRANSITION -> showLocation()
+                else -> Unit
+            }
+        })
+
         find<View>(R.id.content).setOnClickListener { playNextMovie() }
     }
 

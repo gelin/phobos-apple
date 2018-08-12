@@ -22,8 +22,9 @@ class MediaSourceBuilder(
                 Util.getUserAgent(context, context.getString(R.string.app_name)),
                 bandwidthMeter
             )
-            val videoSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(video.url))
-            // TODO: setTag()
+            val videoSource = ExtractorMediaSource.Factory(dataSourceFactory)
+                .setTag(video)
+                .createMediaSource(Uri.parse(video.url))
             result.addMediaSource(videoSource)
         }
         return result
