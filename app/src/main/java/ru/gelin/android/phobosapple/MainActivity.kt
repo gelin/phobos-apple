@@ -30,25 +30,19 @@ class MainActivity : Activity() {
 
         setContentView(R.layout.activity_main)
 
+        initPlayer()
+
+        find<View>(R.id.content).setOnClickListener { playNextMovie() }
+    }
+
+    private fun initPlayer() {
         val bandwidthMeter = DefaultBandwidthMeter()
         val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
         player.setVideoSurfaceView(find(R.id.video))
 
-        async(UI) {
-            toast(R.string.loading)
-            try {
-            val videos = VideosRepository().loadVideos().await()
-            val builder = MediaSourceBuilder(this@MainActivity)
-            player.prepare(builder.build(videos))
-            player.playWhenReady = true
-            player.repeatMode = Player.REPEAT_MODE_ALL
-            } catch (e: Exception) {
-                log.error("Failed to load", e)
-                longToast(getString(R.string.load_failure, e.localizedMessage))
-            }
-        }
+        loadVideos()
 
         player.addListener(object: Player.DefaultEventListener() {
             private fun showLocation() {
@@ -64,8 +58,22 @@ class MainActivity : Activity() {
                 else -> Unit
             }
         })
+    }
 
-        find<View>(R.id.content).setOnClickListener { playNextMovie() }
+    private fun loadVideos() {
+        async(UI) {
+            toast(R.string.loading)
+            try {
+                val videos = VideosRepository().loadVideos().await()
+                val builder = MediaSourceBuilder(this@MainActivity)
+                player.prepare(builder.build(videos))
+                player.playWhenReady = true
+                player.repeatMode = Player.REPEAT_MODE_ALL
+            } catch (e: Exception) {
+                log.error("Failed to load", e)
+                longToast(getString(R.string.load_failure, e.localizedMessage))
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -76,8 +84,12 @@ class MainActivity : Activity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_CENTER -> {
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 playNextMovie()
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                playPrevMovie()
                 true
             }
             else -> super.onKeyDown(keyCode, event)
@@ -85,19 +97,11 @@ class MainActivity : Activity() {
     }
 
     private fun playNextMovie() {
-//        val movie = videos.nextMovie()
-//        if (movie == null) {
-//            toast("No videos loaded")
-//            playNextMovieAfterSecond()
-//            return
-//        }
-//
-//        log.info { "Playing $movie" }
-//
-//        val videoView = find<VideoView>(R.id.video)
-//        videoView.setVideoPath(movie.url)
-//        videoView.start()
-//        videoView.setOnPreparedListener { longToast(movie.location) }
+        player.seekToDefaultPosition(player.nextWindowIndex)
+    }
+
+    private fun playPrevMovie() {
+        player.seekToDefaultPosition(player.previousWindowIndex)
     }
 
 }
