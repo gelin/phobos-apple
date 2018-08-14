@@ -10,7 +10,7 @@ android {
         applicationId "ru.gelin.android.phobosapple"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 3
+        versionCode 4
         versionName "0.2"
     }
     signingConfigs {
