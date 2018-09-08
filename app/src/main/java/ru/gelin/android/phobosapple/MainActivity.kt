@@ -16,7 +16,7 @@ class MainActivity : Activity() {
 
     private val log = AnkoLogger(javaClass)
 
-    private var player = PhobosPlayer(this)
+    private val player = PhobosPlayer(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

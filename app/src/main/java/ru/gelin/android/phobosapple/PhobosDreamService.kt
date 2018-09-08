@@ -7,13 +7,7 @@ class PhobosDreamService: DreamService() {
 
     private val log = AnkoLogger(javaClass)
 
-    private lateinit var player: PhobosPlayer
-
-    override fun onCreate() {
-        super.onCreate()
-
-        player = PhobosPlayer(applicationContext)
-    }
+    private val player = PhobosPlayer(this)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
