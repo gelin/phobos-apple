@@ -1,14 +1,11 @@
 package ru.gelin.android.phobosapple
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.info
-import org.jetbrains.anko.warn
 import org.json.JSONArray
 import java.net.URL
+import java.util.concurrent.Future
 
 class VideosRepository {
 
@@ -19,8 +16,8 @@ class VideosRepository {
     /**
      * Loads videos in a background thread.
      */
-    fun loadVideos(): Deferred<List<Video>> =
-        bg {
+    fun loadVideos(): Future<List<Video>> =
+        doAsyncResult {
             loadCatalogue()
         }
 

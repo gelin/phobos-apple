@@ -8,12 +8,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 class PhobosPlayer(
     private val context: Context
@@ -33,10 +28,6 @@ class PhobosPlayer(
         loadVideos()
 
         player.addListener(object: Player.DefaultEventListener() {
-            private fun showLocation() {
-                val location = (player.currentTag as? Video)?.location ?: return
-                context.longToast(location)
-            }
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
                 Player.STATE_READY -> showLocation()
                 else -> Unit
@@ -49,19 +40,31 @@ class PhobosPlayer(
     }
 
     private fun loadVideos() {
-        async(UI) {
-            this@PhobosPlayer.context.toast(R.string.loading)
+        doAsync {
+            uiThread {
+                context.toast(R.string.loading)
+            }
             try {
-                val videos = VideosRepository().loadVideos().await()
-                val builder = MediaSourceBuilder(this@PhobosPlayer.context)
+                val videos = VideosRepository().loadVideos().get()
+                val builder = MediaSourceBuilder(context)
                 player.prepare(builder.build(videos))
                 player.playWhenReady = true
                 player.repeatMode = Player.REPEAT_MODE_ALL
             } catch (e: Exception) {
                 log.error("Failed to load", e)
-                this@PhobosPlayer.context.longToast(
-                    this@PhobosPlayer.context.getString(R.string.load_failure, e.localizedMessage))
+                uiThread {
+                    context.longToast(
+                        context.getString(R.string.load_failure, e.localizedMessage)
+                    )
+                }
             }
+        }
+    }
+
+    private fun showLocation() {
+        val location = (player.currentTag as? Video)?.location ?: return
+        context.runOnUiThread {
+            longToast(location)
         }
     }
 
