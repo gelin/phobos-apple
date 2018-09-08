@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Phobos Apple</string>
-    <string name="title_activity_main">Phobos Apple</string>
     <string name="loading">Loading…</string>
     <string name="load_failure">Failed to load videos: %1$s</string>
 </resources>
