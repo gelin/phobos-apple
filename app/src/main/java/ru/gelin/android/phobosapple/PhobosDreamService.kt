@@ -7,14 +7,19 @@ class PhobosDreamService: DreamService() {
 
     private val log = AnkoLogger(javaClass)
 
-    private var player = PhobosPlayer(this)
+    private lateinit var player: PhobosPlayer
+
+    override fun onCreate() {
+        super.onCreate()
+
+        player = PhobosPlayer(applicationContext)
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
         isInteractive = false
         isFullscreen = true
-        isScreenBright = true
 
         setContentView(R.layout.main)
     }

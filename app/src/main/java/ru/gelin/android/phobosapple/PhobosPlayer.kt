@@ -62,9 +62,12 @@ class PhobosPlayer(
     }
 
     private fun showLocation() {
-        val location = (player.currentTag as? Video)?.location ?: return
-        context.runOnUiThread {
-            longToast(location)
+        doAsync {
+            log.info("Playing ${player.currentTag}")
+            val location = (player.currentTag as? Video)?.location ?: return@doAsync
+            uiThread {
+                context.longToast(location)
+            }
         }
     }
 
