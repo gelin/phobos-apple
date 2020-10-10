@@ -13,6 +13,9 @@ android {
         versionCode 6
         versionName "0.3"
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     signingConfigs {
         release
     }
@@ -51,9 +54,8 @@ kotlin {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:leanback-v17:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
 //    implementation "org.jetbrains.anko:anko-coroutines:$anko_version"
+    implementation "androidx.leanback:leanback:1.0.0"
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
 }

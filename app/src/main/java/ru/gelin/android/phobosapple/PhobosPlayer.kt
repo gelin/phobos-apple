@@ -2,7 +2,6 @@ package ru.gelin.android.phobosapple
 
 import android.content.Context
 import android.view.SurfaceView
-import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
@@ -19,15 +18,15 @@ class PhobosPlayer(
     private lateinit var player: SimpleExoPlayer
 
     fun init(surfaceView: SurfaceView) {
-        val bandwidthMeter = DefaultBandwidthMeter()
-        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter)
-        val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
-        player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(context).build()
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
+        val trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
+        player = SimpleExoPlayer.Builder(context).setBandwidthMeter(bandwidthMeter).setTrackSelector(trackSelector).build()
         player.setVideoSurfaceView(surfaceView)
 
         loadVideos()
 
-        player.addListener(object: Player.DefaultEventListener() {
+        player.addListener(object: Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
                 Player.STATE_READY -> showLocation()
                 else -> Unit
