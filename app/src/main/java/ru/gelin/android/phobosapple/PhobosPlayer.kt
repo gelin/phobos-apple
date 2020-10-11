@@ -46,9 +46,11 @@ class PhobosPlayer(
             try {
                 val videos = VideosRepository(context).loadVideos().get()
                 val builder = MediaSourceBuilder(context)
-                player.prepare(builder.build(videos))
-                player.playWhenReady = true
-                player.repeatMode = Player.REPEAT_MODE_ALL
+                uiThread {
+                    player.prepare(builder.build(videos))
+                    player.playWhenReady = true
+                    player.repeatMode = Player.REPEAT_MODE_ALL
+                }
             } catch (e: Exception) {
                 log.error("Failed to load", e)
                 uiThread {
@@ -61,10 +63,11 @@ class PhobosPlayer(
     }
 
     private fun showLocation() {
-        log.info("Playing ${player.currentTag}")
-        val name = (player.currentTag as? Video)?.name ?: return
         context.runOnUiThread {
-            longToast(name)
+            log.info("Playing ${player.currentTag}")
+            (player.currentTag as? Video)?.name?.let {
+                longToast(it)
+            }
         }
     }
 
