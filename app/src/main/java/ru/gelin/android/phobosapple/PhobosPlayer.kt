@@ -44,7 +44,7 @@ class PhobosPlayer(
                 context.toast(R.string.loading)
             }
             try {
-                val videos = VideosRepository().loadVideos().get()
+                val videos = VideosRepository(context).loadVideos().get()
                 val builder = MediaSourceBuilder(context)
                 player.prepare(builder.build(videos))
                 player.playWhenReady = true
@@ -62,9 +62,9 @@ class PhobosPlayer(
 
     private fun showLocation() {
         log.info("Playing ${player.currentTag}")
-        val location = (player.currentTag as? Video)?.location ?: return
+        val name = (player.currentTag as? Video)?.name ?: return
         context.runOnUiThread {
-            longToast(location)
+            longToast(name)
         }
     }
 

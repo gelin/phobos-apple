@@ -4,6 +4,7 @@ import os
 import sys
 import csv
 import json
+import shutil
 
 cwd = os.path.abspath((os.path.dirname(sys.argv[0])))
 
@@ -62,3 +63,9 @@ print("Writing", catalog_file_name, '...')
 
 with open(catalog_file_name, 'w') as catalog_file:
     catalog_file.write(json.dumps(json_dict, indent=2))
+
+resource_file_name = os.path.abspath(os.path.join(cwd, '..', 'app', 'src', 'main', 'res', 'raw', 'videos.json'))
+
+print("Copying to", resource_file_name, '...')
+
+shutil.copyfile(catalog_file_name, resource_file_name)

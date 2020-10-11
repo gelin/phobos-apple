@@ -1,55 +1,38 @@
 package ru.gelin.android.phobosapple
 
+import android.content.Context
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.info
 import org.json.JSONArray
-import java.net.URL
 import java.util.concurrent.Future
 
-class VideosRepository {
+class VideosRepository(
+    private val context: Context
+) {
 
     private val log = AnkoLogger(javaClass)
-
-    private val catalogUrl = URL("http://a1.phobos.apple.com/us/r1000/000/Features/atv/AutumnResources/videos/entries.json")
 
     /**
      * Loads videos in a background thread.
      */
     fun loadVideos(): Future<List<Video>> =
         doAsyncResult {
-            loadCatalogue()
+            loadCatalog()
         }
 
+    private fun loadCatalog(): List<Video> {
+        log.info("Loading catalog from resources")
+        // TODO: update catalog from Internet
+        val catalog = context.resources.openRawResource(R.raw.videos)
 
-    private fun loadCatalogue(): List<Video> {
-        val catalog = catalogUrl.openStream().reader().readText()
-        val assets = JSONArray(catalog)
-        val result = mutableListOf<Video>()
-        for (i in 0 until assets.length()) {
-            val assetsObject = assets.getJSONObject(i)
-            val assetsList = assetsObject.getJSONArray("assets")
-            for (j in 0 until assetsList.length()) {
-                val asset = assetsList.getJSONObject(j)
-                if (asset.getString("type") == "video") {
-                    val movie = Video(
-                        url = asset.getString("url"),
-                        location = asset.getString("accessibilityLabel"),
-                        timeOfDay = asset.getString("timeOfDay")
-                    )
-                    result.add(movie)
-                }
-            }
-        }
-        result.shuffle()
-        log.info { "Loaded ${result.size} videos" }
-        return result
+        val type = CatalogParser.VideoType.HEVC_FULLHD_SDR
+        // TODO: choose another video type when possible
+        log.info("Loading catalog type=$type")
+
+        return CatalogParser(catalog).read(type).get()
     }
 
 }
 
-data class Video(
-    val url: String,
-    val location: String,
-    val timeOfDay: String
-)
+
