@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "catalogs": [
+      "https://docs.google.com/spreadsheets/d/1bboTohF06r-fafrImTExAPqM9m6h2m2lgJyAkQuYVJI/edit?usp=sharing"
+    ]
+  },
+  "videos": [
+    {
+      "group": "China",
+      "number": "1",
+      "name": "China",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "https://sylvan.apple.com/Aerials/2x/Videos/comp_CH_C007_C011_PSNK_v02_SDR_PS_FINAL_20180709_SDR_2K_HEVC.mov"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "dvh1",
+          "url": "https://sylvan.apple.com/Aerials/2x/Videos/comp_CH_C007_C011_PSNK_v02_HDR_FINAL_20180709_HDR_2K_HEVC.mov"
+        }
+      ]
+    }
+  ]
+}
