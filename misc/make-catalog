@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import csv
+import json
+
+cwd = os.path.abspath((os.path.dirname(sys.argv[0])))
+
+json_dict = {
+    'meta': {
+        'catalogs': [
+            'https://docs.google.com/spreadsheets/d/1bboTohF06r-fafrImTExAPqM9m6h2m2lgJyAkQuYVJI/edit?usp=sharing'
+        ]
+    },
+    'videos': []
+}
+
+csv_file_name = os.path.abspath(os.path.join(cwd, 'videos.csv'))
+
+print('Reading', csv_file_name, '...')
+
+with open(csv_file_name, newline='') as csv_file:
+    csv_reader = csv.DictReader(csv_file)
+    for csv_row in csv_reader:
+        videos = []
+        if csv_row['fullhd_sdr']:
+            videos.append({
+                'resolution': '1920x1080',
+                'codec': 'hvc1',
+                'url': csv_row['fullhd_sdr']
+            })
+        if csv_row['fullhd_hdr']:
+            videos.append({
+                'resolution': '1920x1080',
+                'codec': 'dvh1',
+                'url': csv_row['fullhd_hdr']
+            })
+        if csv_row['4k_sdr']:
+            videos.append({
+                'resolution': '3840x2160',
+                'codec': 'hvc1',
+                'url': csv_row['4k_sdr']
+            })
+        if csv_row['4k_hdr']:
+            videos.append({
+                'resolution': '3840x2160',
+                'codec': 'dvh1',
+                'url': csv_row['4k_hdr']
+            })
+        video_json = {
+            'group': csv_row['group'],
+            'number': csv_row['number'],
+            'name': csv_row['name'],
+            'videos': videos
+        }
+        json_dict['videos'].append(video_json)
+
+catalog_file_name = os.path.abspath(os.path.join(cwd, '..', 'videos.json'))
+
+print("Writing", catalog_file_name, '...')
+
+with open(catalog_file_name, 'w') as catalog_file:
+    catalog_file.write(json.dumps(json_dict, indent=2))
