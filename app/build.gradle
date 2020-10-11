@@ -58,4 +58,5 @@ dependencies {
 //    implementation "org.jetbrains.anko:anko-coroutines:$anko_version"
     implementation "androidx.leanback:leanback:1.0.0"
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoplayer_version"
 }
