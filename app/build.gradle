@@ -10,8 +10,8 @@ android {
         applicationId "ru.gelin.android.phobosapple"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 6
-        versionName "0.3"
+        versionCode 7
+        versionName "0.4"
     }
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,9 +45,9 @@ if (project.hasProperty('keyPassword')) {
     android.signingConfigs.release.keyPassword = System.getenv('KEY_PASSWORD')
 }
 
-kotlin {
-    experimental {
-        coroutines "enable"
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
     }
 }
 
