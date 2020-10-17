@@ -2,9 +2,12 @@ package ru.gelin.android.phobosapple
 
 import android.content.Context
 import android.view.SurfaceView
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.ShuffleOrder
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -30,6 +33,7 @@ class PhobosPlayer(
 
     fun init(surfaceView: SurfaceView) {
         player = SimpleExoPlayer.Builder(context)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(createHttpDataSourceFactory()))
             .setBandwidthMeter(DefaultBandwidthMeter.Builder(context).build())
             .setTrackSelector(DefaultTrackSelector(context, AdaptiveTrackSelection.Factory()))
             .build()
@@ -38,48 +42,18 @@ class PhobosPlayer(
         loadVideos()
 
         player.addListener(object: Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
-                Player.STATE_READY -> showName()
-                else -> Unit
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                showName(mediaItem)
             }
-            override fun onPositionDiscontinuity(reason: Int) = when (reason) {
-                Player.DISCONTINUITY_REASON_PERIOD_TRANSITION -> showName()
-                else -> Unit
-            }
+//            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
+//                Player.STATE_READY -> showName()
+//                else -> Unit
+//            }
+//            override fun onPositionDiscontinuity(reason: Int) = when (reason) {
+//                Player.DISCONTINUITY_REASON_PERIOD_TRANSITION -> showName()
+//                else -> Unit
+//            }
         })
-    }
-
-    private fun showName() {
-        context.runOnUiThread {
-            log.info("Playing ${player.currentTag}")
-            (player.currentTag as? Video)?.name?.let {
-                longToast(it)
-            }
-        }
-    }
-
-    private fun loadVideos() {
-        doAsync {
-            uiThread {
-                context.toast(R.string.loading)
-            }
-            try {
-                val videos = VideosRepository(context).loadVideos().get()
-                val playlistBuilder = PlaylistBuilder(createHttpDataSourceFactory())
-                uiThread {
-                    player.prepare(playlistBuilder.build(videos))
-                    player.playWhenReady = true
-                    player.repeatMode = Player.REPEAT_MODE_ALL
-                }
-            } catch (e: Exception) {
-                log.error("Failed to load", e)
-                uiThread {
-                    context.longToast(
-                        context.getString(R.string.load_failure, e.localizedMessage)
-                    )
-                }
-            }
-        }
     }
 
     private fun createHttpDataSourceFactory(): HttpDataSource.Factory {
@@ -109,6 +83,44 @@ class PhobosPlayer(
         // TODO: add cache?
         return OkHttpDataSourceFactory(client, Util.getUserAgent(context, context.getString(R.string.app_name)))
     }
+
+    private fun showName(mediaItem: MediaItem?) {
+        context.runOnUiThread {
+            log.info("Playing ${mediaItem?.playbackProperties?.tag}")
+            (mediaItem?.playbackProperties?.tag as? Video)?.name?.let {
+                // TODO: display differently?
+                longToast(it)
+            }
+        }
+    }
+
+    private fun loadVideos() {
+        doAsync {
+            uiThread {
+                context.toast(R.string.loading)
+            }
+            try {
+                val videos = VideosRepository(context).loadVideos().get()
+                uiThread {
+                    player.addMediaItems(videos.map{ it.toMediaItem() })
+                    player.setShuffleOrder(ShuffleOrder.DefaultShuffleOrder(videos.size))
+                    player.shuffleModeEnabled = true
+                    player.repeatMode = Player.REPEAT_MODE_ALL
+                    player.prepare()
+                    player.play()
+                }
+            } catch (e: Exception) {
+                log.error("Failed to load", e)
+                uiThread {
+                    context.longToast(
+                        context.getString(R.string.load_failure, e.localizedMessage)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun Video.toMediaItem(): MediaItem = MediaItem.Builder().setUri(this.url).setTag(this).build()
 
     fun playNextMovie() {
         player.seekToDefaultPosition(player.nextWindowIndex)
