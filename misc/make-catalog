@@ -11,7 +11,8 @@ cwd = os.path.abspath((os.path.dirname(sys.argv[0])))
 json_dict = {
     'meta': {
         'catalogs': [
-            'https://docs.google.com/spreadsheets/d/1bboTohF06r-fafrImTExAPqM9m6h2m2lgJyAkQuYVJI/edit?usp=sharing'
+            'https://docs.google.com/spreadsheets/d/1bboTohF06r-fafrImTExAPqM9m6h2m2lgJyAkQuYVJI/edit?usp=sharing',
+            'https://bzamayo.com/watch-all-the-apple-tv-aerial-video-screensavers',
         ]
     },
     'videos': []
@@ -25,29 +26,35 @@ with open(csv_file_name, newline='') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     for csv_row in csv_reader:
         videos = []
-        if csv_row['fullhd_sdr']:
+        if csv_row['h264_fullhd_sdr']:
+            videos.append({
+                'resolution': '1920x1080',
+                'codec': 'avc1',
+                'url': csv_row['h264_fullhd_sdr']
+            })
+        if csv_row['hevc_fullhd_sdr']:
             videos.append({
                 'resolution': '1920x1080',
                 'codec': 'hvc1',
-                'url': csv_row['fullhd_sdr']
+                'url': csv_row['hevc_fullhd_sdr']
             })
-        if csv_row['fullhd_hdr']:
+        if csv_row['hevc_fullhd_hdr']:
             videos.append({
                 'resolution': '1920x1080',
                 'codec': 'dvh1',
-                'url': csv_row['fullhd_hdr']
+                'url': csv_row['hevc_fullhd_hdr']
             })
-        if csv_row['4k_sdr']:
+        if csv_row['hevc_4k_sdr']:
             videos.append({
                 'resolution': '3840x2160',
                 'codec': 'hvc1',
-                'url': csv_row['4k_sdr']
+                'url': csv_row['hevc_4k_sdr']
             })
-        if csv_row['4k_hdr']:
+        if csv_row['hevc_4k_hdr']:
             videos.append({
                 'resolution': '3840x2160',
                 'codec': 'dvh1',
-                'url': csv_row['4k_hdr']
+                'url': csv_row['hevc_4k_hdr']
             })
         video_json = {
             'group': csv_row['group'],
