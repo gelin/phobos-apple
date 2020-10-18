@@ -1,4 +1,4 @@
-package ru.gelin.android.phobosapple
+package ru.gelin.android.phobosapple.catalog
 
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsyncResult
@@ -14,59 +14,8 @@ class CatalogParser(
 
     private val log = AnkoLogger(javaClass)
 
-    private interface VideoTest {
+    interface VideoTest {
         fun test(json: JSONObject): Boolean
-    }
-
-    sealed class VideoCodec: VideoTest {
-        abstract val compatibleCodecs: List<VideoCodec>
-
-        override fun toString(): String {
-            return this.javaClass.simpleName
-        }
-
-        object H264: VideoCodec() {
-            override fun test(json: JSONObject): Boolean {
-                return json.getString("codec") == "avc1"
-            }
-            override val compatibleCodecs = listOf(H264)
-        }
-
-        object HEVC: VideoCodec() {
-            override fun test(json: JSONObject): Boolean {
-                return json.getString("codec") == "hvc1"
-            }
-            override val compatibleCodecs = listOf(HEVC, H264)
-        }
-
-        object HEVC_HDR: VideoCodec() {
-            override fun test(json: JSONObject): Boolean {
-                return json.getString("codec") == "dvh1"
-            }
-            override val compatibleCodecs = listOf(HEVC_HDR, HEVC, H264)
-        }
-    }
-
-    sealed class VideoResolution: VideoTest {
-        abstract val compatibleResolutions: List<VideoResolution>
-
-        override fun toString(): String {
-            return this.javaClass.simpleName
-        }
-
-        object FULLHD: VideoResolution() {
-            override fun test(json: JSONObject): Boolean {
-                return json.getString("resolution") == "1920x1080"
-            }
-            override val compatibleResolutions = listOf(FULLHD)
-        }
-
-        object UHD1: VideoResolution() {
-            override fun test(json: JSONObject): Boolean {
-                return json.getString("resolution") == "3840x2160"
-            }
-            override val compatibleResolutions = listOf(UHD1, FULLHD)
-        }
     }
 
     /**

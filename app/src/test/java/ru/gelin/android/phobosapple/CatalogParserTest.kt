@@ -7,6 +7,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import ru.gelin.android.phobosapple.catalog.CatalogParser
+import ru.gelin.android.phobosapple.catalog.VideoCodec
+import ru.gelin.android.phobosapple.catalog.VideoResolution
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])
@@ -21,7 +24,7 @@ class CatalogParserTest {
 
     @Test
     fun testHdr4k() {
-        val videos = parser.read(CatalogParser.VideoCodec.HEVC_HDR, CatalogParser.VideoResolution.UHD1).get()
+        val videos = parser.read(VideoCodec.HEVC_HDR, VideoResolution.UHD1).get()
 
         assertEquals(6, videos.size)
         assertEquals(listOf(
@@ -36,7 +39,7 @@ class CatalogParserTest {
 
     @Test
     fun testHdrFullhd() {
-        val videos = parser.read(CatalogParser.VideoCodec.HEVC_HDR, CatalogParser.VideoResolution.FULLHD).get()
+        val videos = parser.read(VideoCodec.HEVC_HDR, VideoResolution.FULLHD).get()
 
         assertEquals(6, videos.size)
         assertEquals(listOf(
@@ -51,7 +54,7 @@ class CatalogParserTest {
 
     @Test
     fun testHevc4k() {
-        val videos = parser.read(CatalogParser.VideoCodec.HEVC, CatalogParser.VideoResolution.UHD1).get()
+        val videos = parser.read(VideoCodec.HEVC, VideoResolution.UHD1).get()
 
         assertEquals(6, videos.size)
         assertEquals(listOf(
@@ -66,7 +69,7 @@ class CatalogParserTest {
 
     @Test
     fun testHevcFullhd() {
-        val videos = parser.read(CatalogParser.VideoCodec.HEVC, CatalogParser.VideoResolution.FULLHD).get()
+        val videos = parser.read(VideoCodec.HEVC, VideoResolution.FULLHD).get()
 
         assertEquals(6, videos.size)
         assertEquals(listOf(
@@ -81,7 +84,7 @@ class CatalogParserTest {
 
     @Test
     fun testH264Fullhd() {
-        val videos = parser.read(CatalogParser.VideoCodec.H264, CatalogParser.VideoResolution.FULLHD).get()
+        val videos = parser.read(VideoCodec.H264, VideoResolution.FULLHD).get()
 
         assertEquals(5, videos.size)
         assertEquals(listOf(

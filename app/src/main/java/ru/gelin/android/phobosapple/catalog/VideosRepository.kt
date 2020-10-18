@@ -1,10 +1,10 @@
-package ru.gelin.android.phobosapple
+package ru.gelin.android.phobosapple.catalog
 
 import android.content.Context
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.info
-import org.json.JSONArray
+import ru.gelin.android.phobosapple.*
 import java.util.concurrent.Future
 
 class VideosRepository(
@@ -27,13 +27,15 @@ class VideosRepository(
         val catalog = context.resources.openRawResource(R.raw.videos)
 
         // TODO: choose another video codec and resolution based on current device capabilities
-        val codec = CatalogParser.VideoCodec.H264
-        val resolution = CatalogParser.VideoResolution.FULLHD
+        val codec = VideoCodec.H264
+        val resolution = VideoResolution.FULLHD
 
         log.info("Loading catalog codec=$codec resolution=$resolution")
 
         return CatalogParser(catalog).read(codec, resolution).get()
     }
+
+//    private fun getSupportedCodec(): VideoCodec
 
 }
 

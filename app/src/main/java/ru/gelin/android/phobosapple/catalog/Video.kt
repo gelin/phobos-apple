@@ -1,4 +1,4 @@
-package ru.gelin.android.phobosapple
+package ru.gelin.android.phobosapple.catalog
 
 data class Video(
     val group: String,

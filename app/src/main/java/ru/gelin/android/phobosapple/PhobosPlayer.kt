@@ -16,6 +16,8 @@ import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.*
+import ru.gelin.android.phobosapple.catalog.Video
+import ru.gelin.android.phobosapple.catalog.VideosRepository
 import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
