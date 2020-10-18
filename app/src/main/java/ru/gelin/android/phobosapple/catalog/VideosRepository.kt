@@ -1,16 +1,16 @@
 package ru.gelin.android.phobosapple.catalog
 
+import android.annotation.TargetApi
 import android.content.Context
-import android.media.MediaCodec
+import android.graphics.Point
+import android.view.Display
 import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.RendererCapabilities
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil
-import com.google.android.exoplayer2.video.MediaCodecVideoRenderer
+import com.google.android.exoplayer2.util.Util
 import org.jetbrains.anko.*
-import ru.gelin.android.phobosapple.*
+import ru.gelin.android.phobosapple.R
 import java.util.concurrent.Future
+
 
 class VideosRepository(
     private val context: Context
@@ -31,39 +31,37 @@ class VideosRepository(
         // TODO: update catalog from Internet
         val catalog = context.resources.openRawResource(R.raw.videos)
 
-        // TODO: choose another resolution based on current device capabilities
-        val codec = getSupportedCodec()
-        val resolution = VideoResolution.FULLHD
+        val (codec, codecResolution) = getSupportedCodecResolution()
+        val displayResolution = getSupportedResolution()
+        val resolution = minOf(codecResolution, displayResolution)
 
         log.info("Loading catalog codec=$codec resolution=$resolution")
 
         return CatalogParser(catalog).read(codec, resolution).get()
     }
 
-    private val FORMAT_BUILDER = Format.Builder()
-        .setWidth(1920).setHeight(1080)
-    private val HEVC_HDR_FORMAT = FORMAT_BUILDER
-        .setSampleMimeType("video/dolby-vision")
-        .build()
-    private val HEVC_FORMAT = FORMAT_BUILDER
-        .setSampleMimeType("video/hevc")
-        .build()
-    private val H264_FORMAT = FORMAT_BUILDER
-        .setSampleMimeType("video/avc")
-        .build()
+    private val FULLHD_BUILDER = Format.Builder().setWidth(1920).setHeight(1080)
+    private val FULLHD_HEVC_HDR_FORMAT = FULLHD_BUILDER.setSampleMimeType("video/dolby-vision").build()
+    private val FULLHD_HEVC_FORMAT = FULLHD_BUILDER.setSampleMimeType("video/hevc").build()
+    private val FULLHD_H264_FORMAT = FULLHD_BUILDER.setSampleMimeType("video/avc").build()
+    private val UHD1_BUILDER = Format.Builder().setWidth(3840).setHeight(2160)
+    private val UHD1_HEVC_HDR_FORMAT = UHD1_BUILDER.setSampleMimeType("video/dolby-vision").build()
+    private val UHD1_HEVC_FORMAT = UHD1_BUILDER.setSampleMimeType("video/hevc").build()
 
-    private fun getSupportedCodec(): VideoCodec {
-        if (isFormatSupported(HEVC_HDR_FORMAT)) {
-            log.info("HEVC HDR is supported")
-            return VideoCodec.HEVC_HDR
-        }
-        if (isFormatSupported(HEVC_FORMAT)) {
-            log.info("HEVC is supported")
-            return VideoCodec.HEVC
-        }
-        if (isFormatSupported(H264_FORMAT)) {
-            log.info("H264 is supported")
-            return VideoCodec.H264
+    private val CHECK_FORMATS = mapOf(
+        UHD1_HEVC_HDR_FORMAT to (VideoCodec.HEVC_HDR to VideoResolution.UHD1),
+        UHD1_HEVC_FORMAT to (VideoCodec.HEVC to VideoResolution.UHD1),
+        FULLHD_HEVC_HDR_FORMAT to (VideoCodec.HEVC_HDR to VideoResolution.FULLHD),
+        FULLHD_HEVC_FORMAT to (VideoCodec.HEVC to VideoResolution.FULLHD),
+        FULLHD_H264_FORMAT to (VideoCodec.H264 to VideoResolution.FULLHD)
+    )
+
+    private fun getSupportedCodecResolution(): Pair<VideoCodec, VideoResolution> {
+        for ((format, result) in CHECK_FORMATS.entries) {
+            if (isFormatSupported(format)) {
+                log.info("Found supported format=$format")
+                return result
+            }
         }
 
         log.warn("No good hardware codec found")
@@ -72,7 +70,7 @@ class VideosRepository(
                 context.getString(R.string.no_supported_codec)
             )
         }
-        return VideoCodec.H264
+        return VideoCodec.H264 to VideoResolution.FULLHD
     }
 
     private fun isFormatSupported(format: Format): Boolean {
@@ -80,6 +78,13 @@ class VideosRepository(
         log.info("Found codec format=$format codec=$codec")
         return codec?.hardwareAccelerated == true
             && codec.isFormatSupported(format)
+    }
+
+    private fun getSupportedResolution(): VideoResolution {
+        val size = Util.getCurrentDisplayModeSize(context)
+        log.info("Detected display size=$size");
+        return if (size.x >= 2160 && size.y >= 2160) VideoResolution.UHD1   // for any screen direction
+            else VideoResolution.FULLHD
     }
 
 }
