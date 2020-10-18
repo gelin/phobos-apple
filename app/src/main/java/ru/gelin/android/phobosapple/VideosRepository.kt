@@ -26,11 +26,13 @@ class VideosRepository(
         // TODO: update catalog from Internet
         val catalog = context.resources.openRawResource(R.raw.videos)
 
-        val type = CatalogParser.VideoType.HEVC_FULLHD_SDR
-        // TODO: choose another video type when possible
-        log.info("Loading catalog type=$type")
+        // TODO: choose another video codec and resolution based on current device capabilities
+        val codec = CatalogParser.VideoCodec.H264
+        val resolution = CatalogParser.VideoResolution.FULLHD
 
-        return CatalogParser(catalog).read(type).get()
+        log.info("Loading catalog codec=$codec resolution=$resolution")
+
+        return CatalogParser(catalog).read(codec, resolution).get()
     }
 
 }

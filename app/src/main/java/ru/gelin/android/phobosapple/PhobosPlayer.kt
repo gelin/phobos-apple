@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.SurfaceView
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.STATE_IDLE
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
@@ -45,14 +46,6 @@ class PhobosPlayer(
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 showName(mediaItem)
             }
-//            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) = when (playbackState) {
-//                Player.STATE_READY -> showName()
-//                else -> Unit
-//            }
-//            override fun onPositionDiscontinuity(reason: Int) = when (reason) {
-//                Player.DISCONTINUITY_REASON_PERIOD_TRANSITION -> showName()
-//                else -> Unit
-//            }
         })
     }
 
@@ -84,16 +77,6 @@ class PhobosPlayer(
         return OkHttpDataSourceFactory(client, Util.getUserAgent(context, context.getString(R.string.app_name)))
     }
 
-    private fun showName(mediaItem: MediaItem?) {
-        context.runOnUiThread {
-            log.info("Playing ${mediaItem?.playbackProperties?.tag}")
-            (mediaItem?.playbackProperties?.tag as? Video)?.name?.let {
-                // TODO: display differently?
-                longToast(it)
-            }
-        }
-    }
-
     private fun loadVideos() {
         doAsync {
             uiThread {
@@ -107,6 +90,7 @@ class PhobosPlayer(
                     player.shuffleModeEnabled = true
                     player.repeatMode = Player.REPEAT_MODE_ALL
                     player.prepare()
+                    player.next()
                     player.play()
                 }
             } catch (e: Exception) {
@@ -122,12 +106,24 @@ class PhobosPlayer(
 
     private fun Video.toMediaItem(): MediaItem = MediaItem.Builder().setUri(this.url).setTag(this).build()
 
-    fun playNextMovie() {
-        player.seekToDefaultPosition(player.nextWindowIndex)
+    private fun showName(mediaItem: MediaItem?) {
+        context.runOnUiThread {
+            if (player.playbackState != STATE_IDLE) {
+                log.info("Playing ${mediaItem?.playbackProperties?.tag}")
+                (mediaItem?.playbackProperties?.tag as? Video)?.name?.let {
+                    // TODO: display without the toast?
+                    longToast(it)
+                }
+            }
+        }
     }
 
-    fun playPrevMovie() {
-        player.seekToDefaultPosition(player.previousWindowIndex)
+    fun playNext() {
+        player.next()
+    }
+
+    fun playPrev() {
+        player.previous()
     }
 
     fun release() {

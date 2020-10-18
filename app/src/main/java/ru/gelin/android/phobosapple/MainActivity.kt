@@ -29,7 +29,7 @@ class MainActivity : Activity() {
         player.init(find(R.id.video))
 
         find<View>(R.id.content).setOnClickListener {
-            player.playNextMovie()
+            player.playNext()
         }
     }
 
@@ -42,11 +42,11 @@ class MainActivity : Activity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                player.playNextMovie()
+                player.playNext()
                 true
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                player.playPrevMovie()
+                player.playPrev()
                 true
             }
             else -> super.onKeyDown(keyCode, event)
