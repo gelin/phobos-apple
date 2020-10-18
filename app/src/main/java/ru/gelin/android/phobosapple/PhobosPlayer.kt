@@ -2,6 +2,8 @@ package ru.gelin.android.phobosapple
 
 import android.content.Context
 import android.view.SurfaceView
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_IDLE
@@ -47,6 +49,9 @@ class PhobosPlayer(
         player.addListener(object: Player.EventListener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 showName(mediaItem)
+            }
+            override fun onPlayerError(error: ExoPlaybackException) {
+                showError(error)
             }
         })
     }
@@ -117,6 +122,26 @@ class PhobosPlayer(
                     longToast(it)
                 }
             }
+        }
+    }
+
+    private fun showError(error: ExoPlaybackException) {
+        log.error("Playback error: ${error.message}")
+        val exception = when(error.type) {
+            TYPE_OUT_OF_MEMORY -> error.outOfMemoryError
+            TYPE_RENDERER -> error.rendererException
+            TYPE_SOURCE -> error.sourceException
+            TYPE_TIMEOUT -> error.timeoutException
+            TYPE_UNEXPECTED -> error.unexpectedException
+            else -> Exception("unknown")
+        }
+        val message = "${error.message}: ${exception.message}"
+        context.runOnUiThread {
+            longToast(message)
+            // TODO: remove broken video from playlist
+            player.next()
+            player.prepare()
+            player.play()
         }
     }
 
