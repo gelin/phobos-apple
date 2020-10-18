@@ -2,4 +2,5 @@
     <string name="app_name">Planet Earth</string>
     <string name="loading">Loading…</string>
     <string name="load_failure">Failed to load videos: %1$s</string>
+    <string name="no_supported_codec">Can fail to play: no hardware codecs found</string>
 </resources>

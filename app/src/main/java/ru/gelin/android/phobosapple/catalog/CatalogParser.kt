@@ -51,7 +51,7 @@ class CatalogParser(
             }
         }
 
-        log.info { "Read catalog code=$codec resolution=$resolution videos=${result.size}" }
+        log.info { "Read catalog codec=$codec resolution=$resolution videos=${result.size}" }
         return result
     }
 
