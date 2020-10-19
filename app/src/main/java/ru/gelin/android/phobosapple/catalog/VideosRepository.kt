@@ -82,7 +82,7 @@ class VideosRepository(
 
     private fun getSupportedResolution(): VideoResolution {
         val size = Util.getCurrentDisplayModeSize(context)
-        log.info("Detected display size=$size");
+        log.info("Detected display size=$size")
         return if (size.x >= 2160 && size.y >= 2160) VideoResolution.UHD1   // for any screen direction
             else VideoResolution.FULLHD
     }
