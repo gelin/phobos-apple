@@ -86,9 +86,6 @@ class PhobosPlayer(
 
     private fun loadVideos() {
         doAsync {
-            uiThread {
-                context.toast(R.string.loading)
-            }
             try {
                 val videos = VideosRepository(context).loadVideos().get()
                 uiThread {

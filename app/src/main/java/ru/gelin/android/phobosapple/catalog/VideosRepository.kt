@@ -27,17 +27,18 @@ class VideosRepository(
         }
 
     private fun loadCatalog(): List<Video> {
-        log.info("Loading catalog from resources")
-        // TODO: update catalog from Internet
-        val catalog = context.resources.openRawResource(R.raw.videos)
-
         val (codec, codecResolution) = getSupportedCodecResolution()
         val displayResolution = getSupportedResolution()
         val resolution = minOf(codecResolution, displayResolution)
 
         log.info("Loading catalog codec=$codec resolution=$resolution")
+        context.runOnUiThread {
+            context.longToast(
+                context.getString(R.string.loading, codec, resolution)
+            )
+        }
 
-        return CatalogParser(catalog).read(codec, resolution).get()
+        return loadFromLocalResources(codec, resolution)
     }
 
     private val FULLHD_BUILDER = Format.Builder().setWidth(1920).setHeight(1080)
@@ -85,6 +86,13 @@ class VideosRepository(
         log.info("Detected display size=$size")
         return if (size.x >= 2160 && size.y >= 2160) VideoResolution.UHD1   // for any screen direction
             else VideoResolution.FULLHD
+    }
+
+    private fun loadFromLocalResources(codec: VideoCodec, resolution: VideoResolution): List<Video> {
+        log.info("Loading catalog from resources")
+        val catalog = context.resources.openRawResource(R.raw.videos)
+
+        return CatalogParser(catalog).read(codec, resolution).get()
     }
 
 }
