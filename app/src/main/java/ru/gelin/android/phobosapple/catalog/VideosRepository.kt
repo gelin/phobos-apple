@@ -1,14 +1,14 @@
 package ru.gelin.android.phobosapple.catalog
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.Point
-import android.view.Display
 import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil
 import com.google.android.exoplayer2.util.Util
 import org.jetbrains.anko.*
 import ru.gelin.android.phobosapple.R
+import java.io.File
+import java.net.URL
+import java.util.*
 import java.util.concurrent.Future
 
 
@@ -38,7 +38,17 @@ class VideosRepository(
             )
         }
 
-        return loadFromLocalResources(codec, resolution)
+        try {
+            return loadFromInternet(codec, resolution)
+        } catch (e: Exception) {
+            log.warn("Failed to load catalog from internet", e)
+        }
+        try {
+            return loadFromCacheFile(codec, resolution, CACHE_FILE)
+        } catch (e: Exception) {
+            log.warn("Failed to load catalog from local cache", e)
+        }
+        return loadFromResources(codec, resolution)
     }
 
     private val FULLHD_BUILDER = Format.Builder().setWidth(1920).setHeight(1080)
@@ -88,11 +98,43 @@ class VideosRepository(
             else VideoResolution.FULLHD
     }
 
-    private fun loadFromLocalResources(codec: VideoCodec, resolution: VideoResolution): List<Video> {
-        log.info("Loading catalog from resources")
-        val catalog = context.resources.openRawResource(R.raw.videos)
+    private val CATALOG_URL = URL("https://raw.githubusercontent.com/gelin/phobos-apple/master/videos.json")
+    private val BUFFER_SIZE = 1024
+    private val CACHE_FILE = "videos.json"
 
-        return CatalogParser(catalog).read(codec, resolution).get()
+    private fun loadFromInternet(codec: VideoCodec, resolution: VideoResolution): List<Video> {
+        log.info("Loading catalog from Internet url=$CATALOG_URL")
+        val tempFileName = UUID.randomUUID().toString() + ".json"
+        val tempFile = File(context.cacheDir, tempFileName)
+        val connection = CATALOG_URL.openConnection()
+        connection.getInputStream().use { inStream ->
+            tempFile.outputStream().use { outStream ->
+                inStream.copyTo(outStream, BUFFER_SIZE)
+            }
+        }
+
+        val result = loadFromCacheFile(codec, resolution, tempFileName)
+        try {
+            tempFile.renameTo(File(context.cacheDir, CACHE_FILE))
+        } catch (e: Exception) {
+            log.warn("Failed to rename cache file", e)
+        }
+        return result
+    }
+
+    private fun loadFromCacheFile(codec: VideoCodec, resolution: VideoResolution, fileName: String): List<Video> {
+        log.info("Loading catalog from cache file=$fileName")
+        val cacheFile = File(context.cacheDir, CACHE_FILE)
+        cacheFile.inputStream().use { stream ->
+            return CatalogParser(stream).read(codec, resolution).get()
+        }
+    }
+
+    private fun loadFromResources(codec: VideoCodec, resolution: VideoResolution): List<Video> {
+        log.info("Loading catalog from resources")
+        context.resources.openRawResource(R.raw.videos).use { stream ->
+            return CatalogParser(stream).read(codec, resolution).get()
+        }
     }
 
 }
