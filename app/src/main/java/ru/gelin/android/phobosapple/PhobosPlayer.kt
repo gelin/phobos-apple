@@ -145,6 +145,14 @@ class PhobosPlayer(
         }
     }
 
+    fun play() {
+        player.play()
+    }
+
+    fun pause() {
+        player.pause()
+    }
+
     fun playNext() {
         player.next()
     }

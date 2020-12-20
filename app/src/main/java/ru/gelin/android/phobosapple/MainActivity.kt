@@ -39,6 +39,18 @@ class MainActivity : Activity() {
         player.release()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        player.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        player.play()
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_DPAD_RIGHT -> {
