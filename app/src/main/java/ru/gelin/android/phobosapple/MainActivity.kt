@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.find
 
@@ -22,11 +23,13 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.main)
+        // TODO: update aspect ratio from the video?
+        find<AspectRatioFrameLayout>(R.id.aspect_ratio_frame).setAspectRatio(16f/9f)
 
         player.init(find(R.id.video))
 
         find<View>(R.id.content).setOnClickListener {
-            player.playNextMovie()
+            player.playNext()
         }
     }
 
@@ -36,14 +39,26 @@ class MainActivity : Activity() {
         player.release()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        player.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        player.play()
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                player.playNextMovie()
+                player.playNext()
                 true
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                player.playPrevMovie()
+                player.playPrev()
                 true
             }
             else -> super.onKeyDown(keyCode, event)

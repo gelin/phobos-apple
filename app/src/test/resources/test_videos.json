@@ -1,0 +1,131 @@
+{
+  "videos": [
+    {
+      "group": "test",
+      "number": "1",
+      "name": "test5",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "avc1",
+          "url": "test5_acv1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "test5_hvc1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "dvh1",
+          "url": "test5_dvh1_1920x1080"
+        },
+        {
+          "resolution": "3840x2160",
+          "codec": "hvc1",
+          "url": "test5_hvc1_3840x2160"
+        },
+        {
+          "resolution": "3840x2160",
+          "codec": "dvh1",
+          "url": "test5_dvh1_3840x2160"
+        }
+      ]
+    },
+    {
+      "group": "test",
+      "number": "1",
+      "name": "test4",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "avc1",
+          "url": "test4_acv1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "test4_hvc1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "dvh1",
+          "url": "test4_dvh1_1920x1080"
+        },
+        {
+          "resolution": "3840x2160",
+          "codec": "hvc1",
+          "url": "test4_hvc1_3840x2160"
+        }
+      ]
+    },
+    {
+      "group": "test",
+      "number": "1",
+      "name": "test3",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "avc1",
+          "url": "test3_acv1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "test3_hvc1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "dvh1",
+          "url": "test3_dvh1_1920x1080"
+        }
+      ]
+    },
+    {
+      "group": "test",
+      "number": "1",
+      "name": "test2",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "avc1",
+          "url": "test2_acv1_1920x1080"
+        },
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "test2_hvc1_1920x1080"
+        }
+      ]
+    },
+    {
+      "group": "test",
+      "number": "1",
+      "name": "test1",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "avc1",
+          "url": "test1_acv1_1920x1080"
+        }
+      ]
+    },
+    {
+      "group": "test",
+      "number": "1",
+      "name": "testH",
+      "videos": [
+        {
+          "resolution": "1920x1080",
+          "codec": "hvc1",
+          "url": "testH_hvc1_1920x1080"
+        },
+        {
+          "resolution": "3840x2160",
+          "codec": "hvc1",
+          "url": "testH_hvc1_3840x2160"
+        }
+      ]
+    }
+  ]
+}
