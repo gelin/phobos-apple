@@ -124,7 +124,7 @@ class VideosRepository(
 
     private fun loadFromCacheFile(codec: VideoCodec, resolution: VideoResolution, fileName: String): List<Video> {
         log.info("Loading catalog from cache file=$fileName")
-        val cacheFile = File(context.cacheDir, CACHE_FILE)
+        val cacheFile = File(context.cacheDir, fileName)
         cacheFile.inputStream().use { stream ->
             return CatalogParser(stream).read(codec, resolution).get()
         }
